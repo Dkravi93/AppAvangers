@@ -2,7 +2,7 @@ import React from "react";
 import './DropDown.css';
 import { useNavigate } from "react-router-dom";
 
-const Dropdown = ({ options, onSelect }) => {
+const Dropdown = ({ onSelect }) => {
     const navigate = useNavigate();
     const handleSelect = (event) => {
         onSelect(event.target.value);
