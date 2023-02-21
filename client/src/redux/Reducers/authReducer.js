@@ -39,7 +39,7 @@ const authReducer = (state = initialState, action) => {
                 ...state,
                 token: null,
                 user: null,
-                error: action.payload,
+                error: action.payload
             };
         case SIGNUP_FAILURE:
             return {
