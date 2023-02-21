@@ -6,16 +6,15 @@ import { logout, UPDATE_USER } from "../redux/Actions/auth";
 import { isAuthenticated } from "../redux/Actions/auth";
 import Dropdown from "./DropDown";
 export const Navbar = () => {
-  const [userState, setUserState] = useState(isAuthenticated());
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const books = useSelector(state => state.books.books);
-  let data = JSON.parse(localStorage.getItem('data'));
+  let data = JSON.parse(localStorage.getItem('data')) || null;
   useEffect(() => {
-    if (data && data.length > 0) {
+    if (data) {
       dispatch({ type: UPDATE_USER, payload: data });
     }
-  }, [userState]);
+  }, [data]);
 
   const [searchTerm, setSearchTerm] = useState('');
   const [searchResults, setSearchResults] = useState([]);
@@ -23,7 +22,6 @@ export const Navbar = () => {
   const [author, setAuthor] = useState('');
   const [description, setDescription] = useState('');
   const [selectedOption, setSelectedOption] = useState("");
-  const options = ["Option 1", "Option 2", "Option 3"];
 
   const handleSet = (event) => {
     setSelectedOption(event.target.getAttribute("value"));
@@ -46,7 +44,7 @@ export const Navbar = () => {
   return (
     <nav style={{ position: "sticky", backgroundColor: "white", top: "0px", zIndex: "2", margin: "auto", padding: "10px", width: "100%" }}>
       <div className="dropdown" >
-        <div style={{ display: "flex",position: "relative", justifyContent: "space-between", gap: "10px", alignItems: "center" }} >
+        <div style={{ display: "flex", position: "relative", justifyContent: "space-between", gap: "10px", alignItems: "center" }} >
           <div onClick={() => navigate("/")}>
             <img src="https://d2g9wbak88g7ch.cloudfront.net/staticimages/logo-new.png" alt="logo" />
           </div>
@@ -67,24 +65,23 @@ export const Navbar = () => {
               Search
             </button>
             {searchResults.length > 0 && (
-          <div className="search-container">
-            {searchResults.map((result, i) => (
-              <div className="dropdown-content" key={i} onClick={() => handleSelect(result)}>
-                <h2>{result.title}</h2>
-                <p>by {result.author}</p>
-                <p>{result.description.substring(0, 10)}</p>
+              <div className="search-container">
+                {searchResults.map((result, i) => (
+                  <div className="dropdown-content" key={i} onClick={() => handleSelect(result)}>
+                    <h2>{result.title}</h2>
+                    <p>by {result.author}</p>
+                    <p>{result.description.substring(0, 10)}</p>
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
-        )}
+            )}
           </form>
-          {userState ? (<div className="d-flex align-items-center gap-2">
+          {data ? (<div className="d-flex align-items-center gap-2">
             <p>{data.data.name}</p>
             <button onClick={() => {
               dispatch(logout());
-              setUserState(!userState);
             }}>Sign Out</button>
-          </div>) : <Dropdown options={options} onSelect={handleSet} />}
+          </div>) : <Dropdown onSelect={handleSet} />}
 
         </div>
 
