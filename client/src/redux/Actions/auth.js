@@ -20,17 +20,19 @@ export const login = (email, password) => async (dispatch) => {
     })
       .then(response => response.json())
       .then(data => {
-        console.log("FFFFFFF", data);
-        localStorage.setItem('data', JSON.stringify(data));
-        (data.status === 'success') ? dispatch({ type: LOGIN_SUCCESS, payload: data }): dispatch({ type: LOGIN_FAILURE, payload: data.data });
+        if(data.status) {
+          dispatch({ type: LOGIN_SUCCESS, payload: data });
+          localStorage.setItem('data', JSON.stringify(data));
+        }else if(data.message) {
+          dispatch({ type: LOGIN_FAILURE, payload: data.message });
+        }
       })
       .catch(error => {
         dispatch({ type: LOGIN_FAILURE, payload: error.message });
       })
       .finally(() => {
-        console.log('Sign up process finished.');
+        console.log('login process finished.');
       });
-    dispatch({ type: LOGIN_SUCCESS, payload: data });
   } catch (error) {
     dispatch({ type: LOGIN_FAILURE, payload: error.message });
   }
@@ -77,7 +79,7 @@ export const signup = ({ name, email, password, passwordConfirm }) => async (dis
 };
 
 export const isAuthenticated = () => {
-  const data = JSON.parse(localStorage.getItem('data'));
+  const data = JSON.parse(localStorage.getItem('data')) || null;
   if (!data) {
     return false;
   }
