@@ -53,7 +53,7 @@ const login = catchAsync(async (req, res) => {
     let user = await User.findOne({ email: req.body.email }).select('+password');
 
     if (!user || !(await user.comaprepass(password, user.password))) {
-        return res.status(401).send({ message: "Incorrect email or password" });
+        return res.status(400).send({ message: "Incorrect email or password" });
     }
 
     const token = signToken(user._id);
