@@ -2,10 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { signup } from '../redux/Actions/auth';
-
+import { isAuthenticated } from '../redux/Actions/auth';
 const SignUp = () => {
     const dispatch = useDispatch();
-    const { error, isAuthenticated } = useSelector(state =>state.auth);
+    const { error } = useSelector(state =>state.auth);
     const navigate = useNavigate();
     const [formData, setFormData] = useState({
         name: '',
@@ -24,9 +24,12 @@ const SignUp = () => {
         e.preventDefault();
         dispatch(signup({ name, email, password,passwordConfirm }));
     };
-    if(isAuthenticated) {
-        navigate("/")
-    }
+    useEffect(()=> {
+        if(isAuthenticated()) {
+            navigate("/");
+            return;
+        }
+    },[error, handleSubmit]);
 
     return (
         <div className="signup" style={{ width: "50%", margin: "auto" }}>

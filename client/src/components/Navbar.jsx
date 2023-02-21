@@ -5,24 +5,18 @@ import { searchBooks } from "../redux/Actions/books";
 import { logout, UPDATE_USER } from "../redux/Actions/auth";
 import { isAuthenticated } from "../redux/Actions/auth";
 import Dropdown from "./DropDown";
+
+
 export const Navbar = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const books = useSelector(state => state.books.books);
   let data = JSON.parse(localStorage.getItem('data')) || null;
-  useEffect(() => {
-    if (data) {
-      dispatch({ type: UPDATE_USER, payload: data });
-    }
-  }, [data]);
-
   const [searchTerm, setSearchTerm] = useState('');
   const [searchResults, setSearchResults] = useState([]);
-  const [title, setTitle] = useState('');
-  const [author, setAuthor] = useState('');
-  const [description, setDescription] = useState('');
   const [selectedOption, setSelectedOption] = useState("");
-
+  const cart = useSelector(state => state.cart.items);
+  const [out, setOut]  = useState(true);
   const handleSet = (event) => {
     setSelectedOption(event.target.getAttribute("value"));
   };
@@ -35,11 +29,17 @@ export const Navbar = () => {
     searchValue.length === 0 ? setSearchResults("") : setSearchResults(results);
   };
 
-  const handleSelect = (result) => {
-    setTitle(result.title);
-    setAuthor(result.author);
-    setDescription(result.description);
-  };
+  const handleLogout = () => {
+    localStorage.setItem("data", null);
+    data = null;
+    dispatch(logout());
+    setOut(!out);
+  }
+  useEffect(() => {
+    if (data) {
+      dispatch({ type: UPDATE_USER, payload: data });
+    }
+  }, [data,out]);
 
   return (
     <nav style={{ position: "sticky", backgroundColor: "white", top: "0px", zIndex: "2", margin: "auto", padding: "10px", width: "100%" }}>
@@ -67,7 +67,7 @@ export const Navbar = () => {
             {searchResults.length > 0 && (
               <div className="search-container">
                 {searchResults.map((result, i) => (
-                  <div className="dropdown-content" key={i} onClick={() => handleSelect(result)}>
+                  <div className="dropdown-content" key={i}>
                     <h2>{result.title}</h2>
                     <p>by {result.author}</p>
                     <p>{result.description.substring(0, 10)}</p>
@@ -77,14 +77,11 @@ export const Navbar = () => {
             )}
           </form>
           {data ? (<div className="d-flex align-items-center gap-2">
-            <p>{data.data.name}</p>
-            <button onClick={() => {
-              dispatch(logout());
-            }}>Sign Out</button>
+            <p>Welcome, {data.data.name}</p>
+            <button className="btn btn-outline-danger" onClick={handleLogout}>Sign Out</button>
           </div>) : <Dropdown onSelect={handleSet} />}
-
+          {data && <div>Cart : {cart.length}</div>}
         </div>
-
       </div>
     </nav>
   );

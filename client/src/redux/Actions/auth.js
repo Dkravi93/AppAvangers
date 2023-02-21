@@ -41,7 +41,6 @@ export const login = (email, password) => async (dispatch) => {
 export const logout = () => async (dispatch) => {
   try {
     dispatch({ type: LOGOUT_SUCCESS });
-    localStorage.setItem("data", null);
   } catch (error) {
     dispatch({ type: LOGOUT_FAILURE, payload: error.message });
   }
@@ -66,6 +65,7 @@ export const signup = ({ name, email, password, passwordConfirm }) => async (dis
       .then(response => response.json())
       .then(data => {
         dispatch({ type: SIGNUP_SUCCESS, payload: data });
+        localStorage.setItem("data", JSON.stringify(data));
       })
       .catch(error => {
         dispatch({ type: SIGNUP_FAILURE, payload: error.message });

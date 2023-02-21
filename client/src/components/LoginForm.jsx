@@ -19,7 +19,6 @@ const LoginForm = () => {
             navigate("/");
             return;
         }
-        console.log("RRRRRR", auth);
     },[auth]);
 
 
